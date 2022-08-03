@@ -18,7 +18,7 @@ const Seo = ({ title }: Props) => {
         property="og:description"
         content="간단하고 재미있는 게임을 해봐요."
       />
-      <meta name="viewport" content="intial-scale=1.0, width=device-width" />
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       <meta property="og:title" content={titleText} />
       <meta property="og:type" content="website" />
       {/* <meta property="og:url" content="https://gnu-weather.vercel.app" />
