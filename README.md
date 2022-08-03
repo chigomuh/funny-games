@@ -10,4 +10,4 @@
 
 #### 순서도
 
-<img src="https://user-images.githubusercontent.com/84620459/182552750-7960f462-ecb5-45c3-b38d-b4f19c8d73d3.png" width="500" height="300" />
+<img src="https://user-images.githubusercontent.com/84620459/182552750-7960f462-ecb5-45c3-b38d-b4f19c8d73d3.png" width="500" height="400" />
