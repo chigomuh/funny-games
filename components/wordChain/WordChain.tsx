@@ -8,6 +8,7 @@ import mergeKoreanChar from "utils/wordChain/function/mergeKoreanChar";
 import verificationWord from "utils/wordChain/function/verificationWord";
 import isPreviousWords from "utils/wordChain/function/isPreviousWords";
 import BigButton from "components/common/BigButton";
+import { useRouter } from "next/router";
 
 const WordChain = () => {
   const [gameStart, setGameStart] = useState(false);
@@ -18,7 +19,17 @@ const WordChain = () => {
   const [verfication, setVerification] = useState(false);
   const randomPage = Math.floor(Math.random() * 10) + 1;
   const currentPage = useRef(randomPage);
-  const [gameDone, setGameDone] = useState(true);
+  const [gameDone, setGameDone] = useState(false);
+  const router = useRouter();
+
+  const reStartGame = () => {
+    setGameStart(false);
+    setWordHistory([]);
+    setWordValue("");
+    setVerificationLoading(false);
+    setVerification(false);
+    setGameDone(false);
+  };
 
   const changePlayerTurn = () => {
     if (currentTurn) {
@@ -55,6 +66,7 @@ const WordChain = () => {
     }
 
     alert("플레이어 승리!");
+    setGameDone(true);
   };
 
   const verificationUserValue = async (userWord: string) => {
@@ -65,6 +77,7 @@ const WordChain = () => {
 
     if (!verification) {
       alert("단어가 없어요, 게임패배");
+      setGameDone(true);
       return;
     }
 
@@ -192,7 +205,20 @@ const WordChain = () => {
         )}
         {gameStart && (
           <>
-            <div>게임시작</div>
+            <div>{gameDone ? "게임 끝" : "게임시작"}</div>
+            {gameDone && (
+              <>
+                <div className="border w-30 h-30" onClick={reStartGame}>
+                  다시 하기
+                </div>
+                <div
+                  className="border w-30 h-30"
+                  onClick={() => router.push("/")}
+                >
+                  운동장 가기
+                </div>
+              </>
+            )}
             <div>현재 순서: {currentTurn ? "유저" : "컴퓨터"}</div>
             {wordHistory.length !== 0 && (
               <>
