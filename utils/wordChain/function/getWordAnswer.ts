@@ -3,7 +3,7 @@ import { Word } from "typings/wordChain";
 import getKoreanChar from "./getKoreanChar";
 import mergeKoreanChar from "./mergeKoreanChar";
 
-const HOST = process.env.HOST;
+const HOST = process.env.NEXT_PUBLIC_HOST;
 
 /**
  * endWord로 시작하는 단어를 찾아요

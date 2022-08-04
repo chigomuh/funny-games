@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOST = process.env.HOST;
+const HOST = process.env.NEXT_PUBLIC_HOST;
 
 /**
  * 유효한 단어인지 확인 함수
