@@ -1,49 +1,12 @@
 import Seo from "components/layout/Seo";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import axios from "axios";
 import { Word } from "typings/wordChain";
-import { getKoreanChar, mergeKoreanChar } from "utils/functions/getKoreanChar";
-import { WORDS } from "utils/constant";
-
-/**
- * 유효한 단어인지 확인 함수
- * return {
- *  verification: true | false,
- *  data: word response Data | undefined
- * }
- */
-const verificationWord = async (word: string) => {
-  const url = `/api/stdict?type=verification&word=${word}`;
-  const json = await axios(url);
-  const data = await json.data;
-
-  if (data.data.channel) {
-    return {
-      verification: true,
-      data: data.data.channel.item[0],
-    };
-  } else {
-    return {
-      verification: false,
-      data: undefined,
-    };
-  }
-};
-
-const isPreviousWords = (word: string, wordList: Word[]) => {
-  let isPrevious = false;
-
-  for (let i = 0; i < wordList.length; i++) {
-    if (wordList[i].word === word) {
-      isPrevious = true;
-      break;
-    }
-  }
-
-  return {
-    isPrevious,
-  };
-};
+import { WORDS } from "utils/wordChain/constant";
+import getWordAnswer from "utils/wordChain/function/getWordAnswer";
+import getKoreanChar from "utils/wordChain/function/getKoreanChar";
+import mergeKoreanChar from "utils/wordChain/function/mergeKoreanChar";
+import verificationWord from "utils/wordChain/function/verificationWord";
+import isPreviousWords from "utils/wordChain/function/isPreviousWords";
 
 const WordChain = () => {
   const [gameStart, setGameStart] = useState(false);
@@ -53,72 +16,29 @@ const WordChain = () => {
   const randomPage = Math.floor(Math.random() * 30) + 1;
   const currentPage = useRef(randomPage);
 
-  const getAnswer = async (endWord: string, page: number) => {
-    const url = `/api/stdict?type=answer&word=${endWord}&start=${page}`;
-    const json = await axios(url);
-    const {
-      data: { channel },
-    } = await json.data;
-    let findAnswer = false;
-
-    if (channel) {
-      for (let i = 0; i < channel.item.length; i++) {
-        const item = channel.item[i];
-        if (item.word.length === 1) continue;
-
-        for (let j = 0; j < wordHistory.length; j++) {
-          if (wordHistory[j].word === item.word) break;
-        }
-
-        setWordHistory((prev) => [...prev, item]);
-        findAnswer = true;
-        setCurrentTurn(true);
-
-        break;
-      }
-
-      if (!findAnswer) {
-        currentPage.current += 1;
-        getAnswer(endWord, currentPage.current);
-      }
-    } else {
-      const {
-        startChar: endStartChar,
-        middleChar: endMiddleChar,
-        endChar: endEndChar,
-      } = getKoreanChar(endWord);
-
-      if (endStartChar === "ㄴ") {
-        const word = mergeKoreanChar(["ㅇ", endMiddleChar, endEndChar]);
-        getAnswer(word, currentPage.current);
-
-        return;
-      } else if (endStartChar === "ㄹ") {
-        const word1 = mergeKoreanChar(["ㅇ", endMiddleChar, endEndChar]);
-        const word2 = mergeKoreanChar(["ㄴ", endMiddleChar, endEndChar]);
-
-        getAnswer(word1, currentPage.current);
-        getAnswer(word2, currentPage.current);
-      }
-
-      alert("승리!");
-    }
-  };
-
   const changePlayerTurn = () => {
     setWordValue("");
     setCurrentTurn((prev) => !prev);
   };
 
-  const onClickChangeTurn = (currentTurn?: string) => () => {
+  const onClickChangeTurn = (currentTurn?: string) => async () => {
     if (currentTurn === "user") {
       setCurrentTurn(true);
       setGameStart(true);
     } else if (currentTurn === "bot") {
       const randomIndex = Math.floor(Math.random() * WORDS.length);
       const word = WORDS[randomIndex];
-      getAnswer(word, currentPage.current);
       setCurrentTurn(false);
+      const { word: startWord } = await getWordAnswer(
+        word,
+        wordHistory,
+        currentPage.current
+      );
+      if (startWord) {
+        setWordHistory((prev) => [...prev, startWord]);
+      }
+
+      changePlayerTurn();
       setGameStart(true);
     }
   };
@@ -157,7 +77,7 @@ const WordChain = () => {
         const word = mergeKoreanChar(["ㅇ", endMiddleChar, endEndChar]);
 
         if (userWord[0] !== word) {
-          alert("두음법칙을 다시 해봐요 'ㄴ' => 'ㅇ'");
+          alert(`두음법칙을 적용해도 첫글자가 달라요. ${userChar} ${word}`);
           changePlayerTurn();
           return;
         }
@@ -170,7 +90,15 @@ const WordChain = () => {
           const nextChar = userWord.at(-1);
 
           if (currentTurn && nextChar) {
-            getAnswer(nextChar, currentPage.current);
+            const { word: nienWord } = await getWordAnswer(
+              nextChar,
+              wordHistory,
+              currentPage.current
+            );
+
+            if (nienWord) {
+              setWordHistory((prev) => [...prev, nienWord]);
+            }
           }
 
           changePlayerTurn();
@@ -178,32 +106,39 @@ const WordChain = () => {
         }
 
         alert("단어가 없어요, 게임패배");
-        changePlayerTurn();
         return;
       } else if (endStartChar === "ㄹ") {
         if (userChar === "ㅇ" || userChar === "ㄴ") {
           const word1 = mergeKoreanChar(["ㅇ", endMiddleChar, endEndChar]);
           const word2 = mergeKoreanChar(["ㄴ", endMiddleChar, endEndChar]);
 
-          console.log(word1, word2);
           if (userWord[0] !== word1 && userWord[0] !== word2) {
-            alert("두음법칙을 다시 해봐요 'ㄹ' => 'ㅇ, ㄴ'");
+            alert(
+              `두음법칙을 적용해도 첫글자가 달라요. ${userChar} ${word1} ${word2}`
+            );
             changePlayerTurn();
             return;
           }
 
           // 검증
           const { verification, data } = await verificationWord(userWord);
-          console.log(verification, data);
           if (verification) {
-            currentPage.current = Math.floor(Math.random() * 30) + 1;
-
             setWordHistory((prev) => [...prev, data]);
-
+            currentPage.current = Math.floor(Math.random() * 30) + 1;
             const nextChar = userWord.at(-1);
 
             if (currentTurn && nextChar) {
-              getAnswer(nextChar, currentPage.current);
+              const { word: rielWord } = await getWordAnswer(
+                nextChar,
+                wordHistory,
+                currentPage.current
+              );
+
+              if (rielWord) {
+                setWordHistory((prev) => [...prev, rielWord]);
+              } else {
+                alert("플레이어 승리!");
+              }
             }
 
             changePlayerTurn();
@@ -242,7 +177,15 @@ const WordChain = () => {
       const nextChar = userWord.at(-1);
 
       if (currentTurn && nextChar) {
-        await getAnswer(nextChar, currentPage.current);
+        const { word: botWord } = await getWordAnswer(
+          nextChar,
+          wordHistory,
+          currentPage.current
+        );
+
+        if (botWord) {
+          setWordHistory((prev) => [...prev, botWord]);
+        }
         changePlayerTurn();
       }
       return;

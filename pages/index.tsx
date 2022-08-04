@@ -2,7 +2,7 @@ import Seo from "components/layout/Seo";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
-import { GAMES } from "utils/constant";
+import { GAMES } from "utils/common/constant";
 
 const Home: NextPage = () => {
   return (
