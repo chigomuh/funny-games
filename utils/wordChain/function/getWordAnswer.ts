@@ -3,6 +3,8 @@ import { Word } from "typings/wordChain";
 import getKoreanChar from "./getKoreanChar";
 import mergeKoreanChar from "./mergeKoreanChar";
 
+const HOST = process.env.HOST;
+
 /**
  * endWord로 시작하는 단어를 찾아요
  * - wordHistory에 입력된 단어는 제외
@@ -27,7 +29,7 @@ const getWordAnswer = async (
   page: number;
 }> => {
   // 끝단어와 페이지로 단어 fetch
-  const url = `/api/stdict?type=answer&word=${endWord}&start=${page}`;
+  const url = `${HOST}/api/stdict?type=answer&word=${endWord}&start=${page}`;
   const json = await axios(url);
   const {
     data: { channel },

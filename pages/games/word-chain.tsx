@@ -177,7 +177,7 @@ const WordChain = () => {
       const nextChar = userWord.at(-1);
 
       if (currentTurn && nextChar) {
-        const { word: botWord } = await getWordAnswer(
+        const { word: botWord, page } = await getWordAnswer(
           nextChar,
           wordHistory,
           currentPage.current
@@ -185,8 +185,27 @@ const WordChain = () => {
 
         if (botWord) {
           setWordHistory((prev) => [...prev, botWord]);
+          changePlayerTurn();
+
+          return;
         }
-        changePlayerTurn();
+
+        if (page !== 1) {
+          const { word: originWord } = await getWordAnswer(
+            nextChar,
+            wordHistory,
+            1
+          );
+
+          if (originWord) {
+            setWordHistory((prev) => [...prev, originWord]);
+            changePlayerTurn();
+
+            return;
+          }
+        }
+
+        alert("플레이어 승리!");
       }
       return;
     }
@@ -220,7 +239,10 @@ const WordChain = () => {
             <div>게임시작</div>
             <div>현재 순서: {currentTurn ? "유저" : "컴퓨터"}</div>
             {wordHistory.length !== 0 && (
-              <div>현재 단어: {wordHistory.at(-1)?.word}</div>
+              <>
+                <div>현재 단어: {wordHistory.at(-1)?.word}</div>
+                <div>총 {Math.floor(wordHistory.length / 2)}번 진행했어요</div>
+              </>
             )}
             <form onSubmit={onSubmitAnswer}>
               <label>단어: </label>
