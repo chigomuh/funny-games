@@ -39,7 +39,7 @@ const getWordAnswer = async (
   if (channel) {
     // 단어 리스트를 돌면서
     for (let i = 0; i < channel.item.length; i++) {
-      const item: Word = channel.item[i];
+      const item = channel.item[i];
 
       // 한 글자인 경우 continue;
       if (item.word.length === 1) continue;
@@ -59,8 +59,13 @@ const getWordAnswer = async (
       if (isPrevWord) continue;
 
       // 해당 단어가 정답으로 가능한 경우 return for 탈출
+      const word = {
+        ...item,
+        word: item.word.replace(/[^가-힣]/g, ""),
+      };
+
       return {
-        word: item,
+        word,
         success: true,
         result: true,
         page,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Word } from "typings/wordChain";
 
 const HOST = process.env.NEXT_PUBLIC_HOST;
 
@@ -11,15 +12,26 @@ const HOST = process.env.NEXT_PUBLIC_HOST;
  *  data: word response Data | undefined
  * }
  */
-const verificationWord = async (word: string) => {
+const verificationWord = async (
+  word: string
+): Promise<{
+  verification: boolean;
+  data: Word | undefined;
+}> => {
   const url = `${HOST}/api/stdict?type=verification&word=${word}`;
   const json = await axios(url);
-  const data = await json.data;
+  const data = json.data;
 
   if (data.data.channel) {
+    const item = data.data.channel.item[0];
+    const word = {
+      ...item,
+      word: item.word.replace(/[^가-힣]/g, ""),
+    };
+
     return {
       verification: true,
-      data: data.data.channel.item[0],
+      data: word,
     };
   } else {
     return {
