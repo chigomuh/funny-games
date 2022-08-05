@@ -1,5 +1,5 @@
 import Seo from "components/layout/Seo";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Word } from "typings/wordChain";
 import { WORDS } from "utils/wordChain/constant";
 import getWordAnswer from "utils/wordChain/function/getWordAnswer";
@@ -9,6 +9,15 @@ import verificationWord from "utils/wordChain/function/verificationWord";
 import isPreviousWords from "utils/wordChain/function/isPreviousWords";
 import BigButton from "components/common/BigButton";
 import { useRouter } from "next/router";
+import { MAIN_BG_COLOR } from "components/common/constant.style";
+
+const STYLE_CONSTANT = {
+  buttonBg: "bg-[#ffe500]",
+  formBg: "bg-[#ffffff]",
+  chatPageBg: "bg-[#b2c7da]",
+  userChatBg: "bg-[#ffeb33]",
+  botChatBg: "bg-[#ffffff]",
+};
 
 const WordChain = () => {
   const [gameStart, setGameStart] = useState(false);
@@ -19,8 +28,36 @@ const WordChain = () => {
   const [verfication, setVerification] = useState(false);
   const randomPage = Math.floor(Math.random() * 10) + 1;
   const currentPage = useRef(randomPage);
+  const chatLogRef = useRef<HTMLDivElement>(null);
+  const inputValueRef = useRef<HTMLInputElement>(null);
   const [gameDone, setGameDone] = useState(false);
   const router = useRouter();
+
+  const { buttonBg, formBg, chatPageBg, userChatBg, botChatBg } =
+    STYLE_CONSTANT;
+
+  const scrollBottom = () => {
+    if (chatLogRef.current) {
+      const { scrollHeight } = chatLogRef.current;
+      window.scrollTo(0, scrollHeight);
+    }
+  };
+
+  const setFocus = () => {
+    if (inputValueRef.current) {
+      const { current } = inputValueRef;
+      current.disabled = false;
+      current.focus();
+    }
+  };
+
+  const setDisabled = () => {
+    if (inputValueRef.current) {
+      const { current } = inputValueRef;
+      current.blur();
+      current.disabled = true;
+    }
+  };
 
   const reStartGame = () => {
     setGameStart(false);
@@ -48,6 +85,8 @@ const WordChain = () => {
     if (word) {
       setWordHistory((prev) => [...prev, word]);
       changePlayerTurn();
+
+      setFocus();
       return;
     }
 
@@ -61,6 +100,8 @@ const WordChain = () => {
       if (originWord) {
         setWordHistory((prev) => [...prev, originWord]);
         changePlayerTurn();
+
+        setFocus();
         return;
       }
     }
@@ -85,7 +126,8 @@ const WordChain = () => {
       const nextChar = userWord[userWord.length - 1];
       setWordHistory((prev) => [...prev, data]);
       currentPage.current = Math.floor(Math.random() * 30) + 1;
-      searchAnswer(nextChar);
+      await searchAnswer(nextChar);
+
       return;
     }
   };
@@ -115,6 +157,8 @@ const WordChain = () => {
   const onSubmitAnswer = async (event: FormEvent) => {
     event.preventDefault();
     changePlayerTurn();
+
+    setDisabled();
 
     const userWord = wordValue;
 
@@ -193,47 +237,80 @@ const WordChain = () => {
     verificationUserValue(userWord);
   };
 
+  useEffect(() => {
+    scrollBottom();
+  }, [wordHistory]);
+
   return (
     <>
       <Seo title="끝말잇기" />
-      <div>
-        {!gameStart && (
-          <>
+
+      {!gameStart && (
+        <>
+          <div
+            className={`flex items-center justify-center w-screen h-screen space-x-4 ${MAIN_BG_COLOR}`}
+          >
             <BigButton text="선공" onClick={onClickChangeTurn("user")} />
             <BigButton text="후공" onClick={onClickChangeTurn("bot")} />
-          </>
-        )}
-        {gameStart && (
-          <>
-            <div>{gameDone ? "게임 끝" : "게임시작"}</div>
-            {gameDone && (
-              <>
-                <div className="border w-30 h-30" onClick={reStartGame}>
-                  다시 하기
-                </div>
-                <div
-                  className="border w-30 h-30"
-                  onClick={() => router.push("/")}
-                >
-                  운동장 가기
-                </div>
-              </>
-            )}
-            <div>현재 순서: {currentTurn ? "유저" : "컴퓨터"}</div>
-            {wordHistory.length !== 0 && (
-              <>
-                <div>현재 단어: {wordHistory.at(-1)?.word}</div>
-                <div>총 {Math.floor(wordHistory.length / 2)}번 진행했어요</div>
-              </>
-            )}
-            <form onSubmit={onSubmitAnswer}>
+          </div>
+        </>
+      )}
+      {gameStart && (
+        <div
+          className={`w-full h-screen flex flex-col justify-between ${chatPageBg}`}
+        >
+          <div className={`${chatPageBg}`}>
+            <div className={`${chatPageBg} w-full sticky top-0 left-0 z-50`}>
+              <div>{gameDone ? "게임 끝" : "게임시작"}</div>
+              {gameDone && (
+                <>
+                  <div className="w-30 h-30" onClick={reStartGame}>
+                    다시 하기
+                  </div>
+                  <div className="w-30 h-30" onClick={() => router.push("/")}>
+                    운동장 가기
+                  </div>
+                </>
+              )}
+              <div>현재 순서: {currentTurn ? "유저" : "컴퓨터"}</div>
+              {wordHistory.length !== 0 && (
+                <>
+                  <div>현재 단어: {wordHistory.at(-1)?.word}</div>
+                  <div>
+                    총 {Math.floor(wordHistory.length / 2)}번 진행했어요
+                  </div>
+                </>
+              )}
+            </div>
+            <div className={`w-full flex flex-col justify-start z-10 sticky`}>
+              <div className={`bottom-0`} ref={chatLogRef}>
+                {wordHistory.map((word) => (
+                  <div key={word.target_code}>
+                    <div
+                      className={`${
+                        word.entered === "user" ? userChatBg : botChatBg
+                      }`}
+                    >
+                      {word.word}
+                    </div>
+                    <div>{word.sense.definition}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="sticky bottom-0 left-0 z-50 w-full">
+            <form
+              onSubmit={onSubmitAnswer}
+              className={`flex items-center justify-between ${formBg} w-full`}
+            >
               <label>단어: </label>
               <input
                 type="text"
                 placeholder="입력해봐요"
                 value={wordValue}
                 onChange={onChangeValue}
-                disabled={!currentTurn}
+                ref={inputValueRef}
                 autoFocus={true}
               />
               {verificationLoading ? (
@@ -243,19 +320,17 @@ const WordChain = () => {
                   {verfication ? "인정!" : "실패!"}
                 </span>
               ) : null}
-              <button type="submit" disabled={!currentTurn}>
+              <button
+                type="submit"
+                disabled={!currentTurn}
+                className={`${buttonBg}`}
+              >
                 전송하기
               </button>
             </form>
-            {wordHistory.map((word) => (
-              <div key={word.target_code}>
-                <div>{word.word}</div>
-                <div>{word.sense.definition}</div>
-              </div>
-            ))}
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Word } from "typings/wordChain";
-import getKoreanChar from "./getKoreanChar";
-import mergeKoreanChar from "./mergeKoreanChar";
+import getKoreanChar from "utils/wordChain/function/getKoreanChar";
+import mergeKoreanChar from "utils/wordChain/function/mergeKoreanChar";
 
 const HOST = process.env.NEXT_PUBLIC_HOST;
 
@@ -39,16 +39,17 @@ const getWordAnswer = async (
   if (channel) {
     // 단어 리스트를 돌면서
     for (let i = 0; i < channel.item.length; i++) {
-      const item = channel.item[i];
+      const item: Word = channel.item[i];
 
       // 한 글자인 경우 continue;
       if (item.word.length === 1) continue;
 
       // 단어 히스토리를 돌면서
       let isPrevWord = false;
+      const replaceItemWord = item.word.replace(/[^가-힣]/g, "");
       for (let j = 0; j < wordHistory.length; j++) {
         // 만약, 단어 히스토리에 있는 단어인 경우
-        if (wordHistory[j].word === item.word) {
+        if (wordHistory[j].word === replaceItemWord) {
           // 이미 있는 단어이다 -> for 탈출
           isPrevWord = true;
           break;
@@ -59,9 +60,10 @@ const getWordAnswer = async (
       if (isPrevWord) continue;
 
       // 해당 단어가 정답으로 가능한 경우 return for 탈출
-      const word = {
+      const word: Word = {
         ...item,
-        word: item.word.replace(/[^가-힣]/g, ""),
+        word: replaceItemWord,
+        entered: "bot",
       };
 
       return {

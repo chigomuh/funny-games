@@ -2,6 +2,8 @@ import {
   BOX_SHADOW,
   BUTTON_BG_COLOR,
   BUTTON_TEXT_COLOR,
+  MAIN_BG_COLOR,
+  MAIN_TEXT_COLOR,
 } from "components/common/constant.style";
 import Seo from "components/layout/Seo";
 import type { NextPage } from "next";
@@ -14,22 +16,10 @@ const Home: NextPage = () => {
   return (
     <>
       <Seo title="운동장" />
-      <div className="w-screen h-screen space-y-10 md:flex">
-        <div className="relative">
-          <div className="absolute top-0 right-0 z-50 py-4 text-3xl font-bold">
-            <span className="flex flex-col items-end">
-              <span>어이 인간,</span>
-              <span>게임 한 판 어때</span>
-            </span>
-          </div>
-          <Image
-            src="/images/main-cat.png"
-            alt="cat"
-            width={600}
-            height={400}
-          />
-        </div>
-        <div className="flex items-center justify-center">
+      <div
+        className={`w-screen h-screen overflow-hidden ${MAIN_TEXT_COLOR} bg-[url('/images/main-background.gif')] bg-no-repeat bg-center bg-cover`}
+      >
+        <div className="flex items-center justify-center w-full h-full">
           {GAMES.map((game) => (
             <Fragment key={game.id}>
               <Link href={`/games/${game.id}`}>

@@ -24,9 +24,10 @@ const verificationWord = async (
 
   if (data.data.channel) {
     const item = data.data.channel.item[0];
-    const word = {
+    const word: Word = {
       ...item,
       word: item.word.replace(/[^가-힣]/g, ""),
+      entered: "user",
     };
 
     return {

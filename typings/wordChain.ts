@@ -8,4 +8,5 @@ export interface Word {
   sup_no: string;
   target_code: string;
   word: string;
+  entered: "user" | "bot";
 }
