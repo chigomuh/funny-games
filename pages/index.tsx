@@ -2,12 +2,10 @@ import {
   BOX_SHADOW,
   BUTTON_BG_COLOR,
   BUTTON_TEXT_COLOR,
-  MAIN_BG_COLOR,
   MAIN_TEXT_COLOR,
 } from "components/common/constant.style";
 import Seo from "components/layout/Seo";
 import type { NextPage } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 import { GAMES } from "utils/common/constant";
@@ -19,6 +17,9 @@ const Home: NextPage = () => {
       <div
         className={`w-screen h-screen overflow-hidden ${MAIN_TEXT_COLOR} bg-[url('/images/main-background.gif')] bg-no-repeat bg-center bg-cover`}
       >
+        <div className="absolute top-[10%] left-1/2 -translate-x-[50%] text-6xl font-bold">
+          WELCOME TO FUNNY GAME
+        </div>
         <div className="flex items-center justify-center w-full h-full">
           {GAMES.map((game) => (
             <Fragment key={game.id}>

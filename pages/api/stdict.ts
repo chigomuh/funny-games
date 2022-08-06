@@ -8,7 +8,7 @@ const stdict = async (req: NextApiRequest, res: NextApiResponse) => {
     query: { word, type, start },
   } = req;
 
-  const defaultEndPoint = `${BASE_URL}?key=${API_KEY}&q=${word}&req_type=json&advanced=y&pos=1&type1=word&type2=native,loanword,chinese`;
+  const defaultEndPoint = `${BASE_URL}?key=${API_KEY}&q=${word}&req_type=json&advanced=y&pos=1&type1=word`;
 
   if (type === "verification") {
     const URL = defaultEndPoint;
