@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         className={`w-screen h-screen overflow-hidden ${MAIN_TEXT_COLOR} bg-[url('/images/main-background.gif')] bg-no-repeat bg-center bg-cover`}
       >
         <div className="absolute top-[10%] left-1/2 -translate-x-[50%] text-6xl font-bold">
-          WELCOME TO FUNNY GAME
+          WELCOME TO FUNNY WORLD
         </div>
         <div className="flex items-center justify-center w-full h-full">
           {GAMES.map((game) => (
