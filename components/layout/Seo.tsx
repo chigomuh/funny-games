@@ -12,7 +12,7 @@ const Seo = ({ title, description, url, image }: Props) => {
   const descriptionText = description ?? "간단한 게임을 즐겨봐요!";
   const urlLink = url ?? "https://games-chigomuh.vercel.app";
   const imageLink =
-    image ?? "https://games-chigomuh.vercel.app/images/thumnail/main.png";
+    image ?? "https://games-chigomuh.vercel.app/images/thumnail/main.PNG";
 
   return (
     <Head>
