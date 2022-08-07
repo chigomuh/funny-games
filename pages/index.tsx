@@ -13,12 +13,15 @@ import { GAMES } from "utils/common/constant";
 const Home: NextPage = () => {
   return (
     <>
-      <Seo title="운동장" />
+      <Seo />
       <div
         className={`w-screen h-screen overflow-hidden ${MAIN_TEXT_COLOR} bg-[url('/images/main-background.gif')] bg-no-repeat bg-center bg-cover`}
       >
-        <div className="absolute top-[10%] left-1/2 -translate-x-[50%] text-6xl font-bold">
-          WELCOME TO FUNNY WORLD
+        <div className="absolute top-[10%] left-1/2 -translate-x-[50%] text-6xl font-bold flex flex-col">
+          <span>WELCOME</span>
+          <span>TO</span>
+          <span>FUNNY</span>
+          <span>WORLD</span>
         </div>
         <div className="flex items-center justify-center w-full h-full">
           {GAMES.map((game) => (

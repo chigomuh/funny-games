@@ -45,7 +45,12 @@ const WordChain = () => {
 
   return (
     <>
-      <Seo title="끝말잇기" />
+      <Seo
+        title="끝말잇기"
+        url="https://games-chigomuh.vercel.app/word-chain"
+        image="https://games-chigomuh.vercel.app/images/thumnail/wordChain.png"
+        description="국립국어원 표준국어대사전을 통째로 외워버린 끝말잇기 장인과 대결해보세요!"
+      />
       {error && <Error reStartGame={reStartGame} />}
       <div
         className={`w-full h-screen flex flex-col justify-between ${chatPageBg} relative`}

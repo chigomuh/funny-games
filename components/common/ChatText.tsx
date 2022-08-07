@@ -5,14 +5,12 @@ interface Props {
 }
 
 const ChatText = ({ text, backgroundColor, dangerouslySet }: Props) => {
-  const borderColorSet = `after:border-t-[${backgroundColor.slice(4, 11)}]`;
   const borderColor = backgroundColor.slice(4, 11);
   const positionSet =
     backgroundColor === "bg-[#ffffff]"
       ? `after:left-[-8px] left-0`
       : `after:right-[-8px] right-0`;
 
-  console.log(borderColorSet);
   if (dangerouslySet) {
     return (
       <>
