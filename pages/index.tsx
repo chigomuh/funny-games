@@ -23,12 +23,12 @@ const Home: NextPage = () => {
           <span>FUNNY</span>
           <span>WORLD</span>
         </div>
-        <div className="flex items-center justify-center w-full h-full">
+        <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
           {GAMES.map((game) => (
             <Fragment key={game.id}>
               <Link href={`/games/${game.id}`}>
                 <a
-                  className={`flex justify-center items-center w-40 h-10  font-bold text-xl rounded-lg ${BUTTON_BG_COLOR} ${BUTTON_TEXT_COLOR}`}
+                  className={`flex justify-center items-center w-40 h-10 font-bold text-xl rounded-lg ${BUTTON_BG_COLOR} ${BUTTON_TEXT_COLOR}`}
                   style={{
                     boxShadow: BOX_SHADOW,
                   }}

@@ -11,3 +11,11 @@
 #### 순서도
 
 <img src="https://user-images.githubusercontent.com/84620459/182552750-7960f462-ecb5-45c3-b38d-b4f19c8d73d3.png" width="500" height="400" />
+
+### 숫자야구
+
+> 컴퓨터가 제시하는 숫자를 맞춰보세요.
+
+#### 순서도
+
+<img src="https://user-images.githubusercontent.com/84620459/183861157-97348144-8023-4c56-9379-40736d5b1336.PNG" width="500" height="500" />
