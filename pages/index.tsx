@@ -17,13 +17,13 @@ const Home: NextPage = () => {
       <div
         className={`w-screen h-screen overflow-hidden ${MAIN_TEXT_COLOR} bg-[url('/images/main-background.gif')] bg-no-repeat bg-center bg-cover`}
       >
-        <div className="absolute top-[10%] left-1/2 -translate-x-[50%] text-6xl font-bold flex flex-col">
+        <div className="flex flex-col p-4 text-6xl font-bold">
           <span>WELCOME</span>
           <span>TO</span>
           <span>FUNNY</span>
           <span>WORLD</span>
         </div>
-        <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+        <div className="flex flex-col items-center justify-start w-full h-full space-y-4">
           {GAMES.map((game) => (
             <Fragment key={game.id}>
               <Link href={`/games/${game.id}`}>
